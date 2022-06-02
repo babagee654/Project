@@ -1,31 +1,44 @@
-<% layout('/layouts/boilerplate') %>
+<% layout('/layouts/boilerplate') %> <% let questions = [data.q1, data.q2] %>
+
 <form action="">
     <div class="d-flex flex-row justify-content-evenly vh-75">
+        <% for (let i = 0; i < questions.length; i++) {%>
         <div class="card mx-3" style="width: 18rem">
             <img src="https://static.tvtropes.org/pmwiki/pub/images/dndrace2.png" class="card-img-top" alt="RPG races" />
             <div class="card-body">
-                <h5 class="card-title">Q1:</h5>
-                <p class="card-text">Choose a race</p>
+                <h5 class="card-title">Q<%=i+1%>:</h5>
+                <p class="card-text"><%=questions[i].question%></p>
             </div>
 
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <input type="radio" name="q1" id="q1_a" />
-                    <label for="q1_a" class="card-text">Human</label>
+                    <input type="radio" name="q<%=i+1%>" id="q<%=i+1%>_a" />
+                    <label for="q<%=i+1%>_a" class="card-text"><%=questions[i].a.value%></label>
                 </li>
                 <li class="list-group-item">
-                    <input type="radio" name="q1" id="q1_b" />
-                    <label for="q1_b" class="card-text">Orc</label>
+                    <input type="radio" name="q<%=i+1%>" id="q<%=i+1%>_b" />
+                    <label for="q<%=i+1%>_b" class="card-text"><%=questions[i].b.value%></label>
                 </li>
                 <li class="list-group-item">
-                    <input type="radio" name="q1" id="q1_c" />
-                    <label for="q1_c" class="card-text">Elf</label>
+                    <input type="radio" name="q<%=i+1%>" id="q<%=i+1%>_c" />
+                    <label for="q<%=i+1%>_c" class="card-text"><%=questions[i].c.value%></label>
                 </li>
                 <li class="list-group-item">
-                    <input type="radio" name="q1" id="q1_d" />
-                    <label for="q1_d" class="card-text">Dwarf</label>
+                    <input type="radio" name="q<%=i+1%>" id="q<%=i+1%>_d" />
+                    <label for="q<%=i+1%>_d" class="card-text"><%=questions[i].d.value%></label>
                 </li>
             </ul>
         </div>
+        <% } %>
     </div>
 </form>
+
+<script>
+    document.querySelector("#q2a").style.display = "none";
+
+    let radiobtn = document.querySelector("#q2_a");
+
+    radiobtn.addEventListener("click", (e) => {
+        document.querySelector("#q2a").style.display = "block";
+    });
+</script>
