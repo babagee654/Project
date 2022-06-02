@@ -1,3 +1,31 @@
 <% layout('/layouts/boilerplate') %>
+<form action="">
+    <div class="d-flex flex-row justify-content-evenly vh-75">
+        <div class="card mx-3" style="width: 18rem">
+            <img src="https://static.tvtropes.org/pmwiki/pub/images/dndrace2.png" class="card-img-top" alt="RPG races" />
+            <div class="card-body">
+                <h5 class="card-title">Q1:</h5>
+                <p class="card-text">Choose a race</p>
+            </div>
 
-<h1>HELLOQ</h1>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <input type="radio" name="q1" id="q1_a" />
+                    <label for="q1_a" class="card-text">Human</label>
+                </li>
+                <li class="list-group-item">
+                    <input type="radio" name="q1" id="q1_b" />
+                    <label for="q1_b" class="card-text">Orc</label>
+                </li>
+                <li class="list-group-item">
+                    <input type="radio" name="q1" id="q1_c" />
+                    <label for="q1_c" class="card-text">Elf</label>
+                </li>
+                <li class="list-group-item">
+                    <input type="radio" name="q1" id="q1_d" />
+                    <label for="q1_d" class="card-text">Dwarf</label>
+                </li>
+            </ul>
+        </div>
+    </div>
+</form>

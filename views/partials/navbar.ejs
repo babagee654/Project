@@ -1,28 +1,42 @@
-<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-custom">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">RPG GEN</a>
+        <a class="navbar-brand h1 m-0" href="/">
+            <img class="d-inline-block align-top" src="./img/frog-icon.png" width="30" height="30" alt="" />
+            RPG GEN</a
+        >
         <button
             class="navbar-toggler"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
             aria-expanded="false"
             aria-label="Toggle navigation"
         >
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav">
                 <a class="nav-link active" href="/">Home</a>
                 <a class="nav-link" href="/quiz">Quiz</a>
+                <div class="dropdown nav-item">
+                    <a href="#" class="dropdown-toggle nav-link" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                        >Dropdown
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li>
+                            <a href="#" class="dropdown-item">Punk 1</a>
+                            <a href="#" class="dropdown-item">Punk 2</a>
+                            <a href="#" class="dropdown-item">Punk 3</a>
+                        </li>
+                    </ul>
+                </div>
                 <!-- <a class="nav-link" href="/campgrounds/new">Saved Characters</a> -->
             </div>
 
             <div class="navbar-nav ms-auto">
                 <a href="/login" class="nav-link">Login</a>
-                <a href="/register" class="nav-link">Register</a>
             </div>
         </div>
     </div>

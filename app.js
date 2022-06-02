@@ -7,6 +7,9 @@ const ejsMate = require('ejs-mate');
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, "views"));
+app.use(express.urlencoded({ extended: true }));
+// app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'public')))
 
 
 app.get('/quiz', (req, res) => {
@@ -14,9 +17,9 @@ app.get('/quiz', (req, res) => {
     res.render("quiz.ejs");
 })
 
-app.get('/register', (req, res) => {
+app.get('/login', (req, res) => {
     console.log("SHOWING REGISTER");
-    res.render("register.ejs");
+    res.render("login.ejs");
 })
 
 app.get('/user/:id/saves'), (req, res) => {
