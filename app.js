@@ -3,6 +3,22 @@ const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 const ejsMate = require('ejs-mate');
+const Question = require('./model/question');
+
+const dbUrl = 'mongodb://localhost:27017/RPGMaker';
+
+mongoose.connect(dbUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+    console.log("Database connected.");
+})
+
+
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
@@ -11,106 +27,115 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')))
 
-// DATA
-const data = {
-    //id
-    q1: {
-        question: 'choose a race',
-        a: { value: 'human', next: {} },
-        b: { value: 'elf', next: {} },
-        c: { value: 'orc', next: {} },
-        d: { value: 'dwarf', next: {} },
-    },
-    q2: {
-        question: 'When confronted by a giant owlbear your first instinct is to',
-        a: {
-            value: 'Fight it',
-            next: {
-                question: 'When fighting you prefer to',
-                a: { value: 'get up close and persona', next: {} },
-                b: { value: 'sneak up', next: {} },
-                c: { value: 'stay far away and shoot from a distance ', next: {} },
-                d: { value: 'cast magic', next: {} },
-            }
-        },
-        b: {
-            value: 'Run away',
-            next: {
-                question: 'Where would you run to?',
-                a: { value: 'run and never stop', next: {} },
-                b: { value: 'run and find a hiding spot to set up a trap', next: {} },
-                c: { value: 'to my party members cause they are so much stronger', next: {} },
-                d: { value: 'run into the local village and prepare them for battle', next: {} },
-            }
-        },
-        c: {
-            value: 'Try to understand the situation',
-            next: {
-                question: 'As you observe, the owlbear seems to be injured, what is your next move?',
-                a: { value: 'It’s an easy kill, go and attack.', next: {} },
-                b: { value: 'carefully show yourself to the owlbear, and try to heal it.', next: {} },
-                c: { value: 'ignore it and wait for it to pass.', next: {} },
-                d: { value: 'Now’s your chance, channel a spell.', next: {} },
-            }
-        },
-        d: {
-            value: 'Give it a treat',
-            next: {
-                question: 'The owlbear is suspicious of you and lets out a loud roar, what is your next move?',
-                a: { value: 'leave the treat on the ground and slowly back away.', next: {} },
-                b: { value: "shove the treat down the owlbear's throat.", next: {} },
-                c: { value: 'quickly cast a spell to calm the owlbear.', next: {} },
-                d: { value: "display your dominance by imitating the owlbear's roar but louder.", next: {} },
-            }
-        },
-    },
-    // q3: {
-    //     question: 'You enter a town looking for a quest, where do you go first?',
-    //     a: 'The local inn',
-    //     b: 'The town square',
-    //     c: ' The mysterious cabin in the outskirts of town',
-    //     d: 'The market, you got some things to do first',
-    //     next: {
-    //         q3a: {
-    //             question:
-    //                 'At the inn you find an innkeeper, a grumpy mercenary, and a shady hooded figure. What is your next action?',
-    //             a: 'Seduce the innkeeper',
-    //             b: 'Attempt to intimidate the mercenary',
-    //             c: 'Cast magic to detect the thoughts of the hooded figure',
-    //             d: 'Offer gold to the innkeeper for some info about the people at the inn',
-    //         },
-    //         q3b: {
-    //             question:
-    //                 ' At the town square, there is a crowd of people surrounding a caravan. What is your next move?',
-    //             a: 'Use your knowledge of the town’s history to figure out what is happening',
-    //             b: 'Lie to the caravan guard and say you’re part of it and need to get back on',
-    //             c: 'Play your instrument because you are so good at playing it',
-    //             d: 'Cast a spell to disperse the crowd and see why they are gathered',
-    //         },
-    //         q3c: {
-    //             question:
-    //                 'You arrive at the cabin but there seems to be no one answering the door. What do you do?',
-    //             a: 'Break down the door',
-    //             b: 'Climb onto a tree and try to look inside cabin',
-    //             c: 'Cast a spell to teleport somewhere inside',
-    //             d: 'Channel a spell to try and communicate with the supernatural',
-    //         },
-    //         q3d: {
-    //             question:
-    //                 'At the market there is a magician selling scrolls, a throat singer singing ballads, and a blacksmith forging weapons, who do you approach?',
-    //             a: 'The magician, you want to learn some spells',
-    //             b: 'The blacksmith, you want a new weapon',
-    //             c: 'The throat singer, you want to improve your performance skills',
-    //             d: 'Sell some of your wares to a general store cause you’re poor.',
-    //         },
-    //     }
-    // },
-};
 
+const questionsData = require('./public/js/questionsData');
 
+app.post('/add', async (req, res) => {
+    // console.log(questionsData);
+    await Question.deleteMany();
+    for (let i = 0; i < questionsData.length; i++) {
+        questionsData[i].save()
+            .then(res => console.log("It worked!\n", res))
+            .catch(err => console.log("It failed!\n", err.errors.name.properties.message))
+    }
+    res.redirect('/');
+})
 
-app.get('/quiz', (req, res) => {
+/**
+ * To compare the class values
+ * 
+ * Server--side
+ * Score for each answer?
+ * 
+ * for Question 1a)
+ * Race: {},
+ * Score: {
+ *      warrior: 1
+ *      ranger: 1
+ *      bard: 0
+ *      mage: 0
+ * },
+ * Trait: {}
+ * 
+ * 
+ * Client--side: Keeping track of current character score
+ * 
+ * // Comes from the server
+ * const data = fetch(urlToGetData) ---- would return data
+ * // data.score.warrior =1        data.score.ranger = 1
+ * 
+ * // Comes from the server
+ * let dataKeysArray = data.score.keys // [warrior, ranger, bard, mage]
+ * 
+ * 
+ * // The client/browser keeps track of their score.
+ * let currClassScore = [{class: warrior, count: 1}, {class: ranger, count: 1}, {class: bard, count: 1}, {class: mage, count: 1}]
+ * 
+ * 
+ * // Access each key in data.score, and add the value to our score tracker
+ * for (i in dataKeysArray){
+ *      
+ *     let keyName = dataKeysArray[i] // "warrior"
+ * 
+ *     let currDataValue = data.score[keyName]  // 1
+ * 
+ *     let currClass = currClassScore[i]              // {class:warrior, count: 1}
+ * 
+ *     currClass.count += currDataValue
+ *  
+ * }
+ * 
+ * 
+ *  -- AFTER ALL QUESTIONS ARE DONE -- We use the results of the saved browser score to save their character.
+ * 
+ * // Find the class with the Highest Score
+ * 
+ * let currClassScore = [{class: warrior, count: 5}, {class: ranger, count: 2}, {class: bard, count: 0}, {class: mage, count: 6}]
+ * 
+ * let highestClassScore = currClassScore.reduce((prev, curr) => {
+ *      	if (prev.count > curr.count){
+                return prev
+            }
+            return curr
+ * })
+ *  Use as character creation data
+ * 
+ */
+
+/**
+ * Find question
+ * 
+ * Find nextQuestion
+ * 
+ * Create relationship between question and nextQuestion
+ * 2.a.next === 2a
+ *  2.b.next === 2b
+ * 
+ * 
+ */
+
+app.get('/relate', async (req, res) => {
+    let currQuestion = await Question.find({ name: "2" });
+    let nextQuestion = await Question.find({ name: "2a" });
+
+    console.log(currQuestion[0].a)
+    console.log(nextQuestion[0]._id)
+
+    let updateQuestion = await Question.updateOne({ _id: currQuestion[0]._id }, { $set: { a: { answer: 'Fight it', next: nextQuestion[0]._id } } })
+        .then(
+            res => console.log(res),
+            err => console.error(err)
+        )
+    res.send("Relating")
+})
+
+app.get('/quiz', async (req, res) => {
     console.log("SHOWING QUIZ");
+
+    let data = await Question.find({})
+        .populate('a.next')
+        ;
+    // console.log(data)
     res.render("quiz.ejs", { data });
 })
 
